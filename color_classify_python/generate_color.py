@@ -34,7 +34,7 @@ def find_main_color(file,  max_iterations=20, min_distance=0.5, k=10):
     # print(hsv_color)
     for i in range(0, len(hsv_color)):
         r, g, b = colorsys.hsv_to_rgb(hsv_color[i][0], hsv_color[i][1], hsv_color[i][2])
-        color[i] = (b, g, r)
+        color[i] = (r, g, b)
         # print(color[i])
     return color
 
