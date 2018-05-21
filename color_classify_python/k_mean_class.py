@@ -2,14 +2,6 @@
 import random
 import numpy
 
-
-from PIL import Image
-import random
-import numpy
-import generate_color
-import cv2
-import colorsys
-
 """
  -------------k_mean_class---------------
 功能：使用k值估计计算传入图片的主题颜色
@@ -57,17 +49,14 @@ class Cluster(object):
 
 class Kmeans(object):
 
-    def __init__(self, k=3, max_iterations=5, min_distance=5.0, size=200):
+    def __init__(self, k=3, max_iterations=5, min_distance=5.0):
         self.k = k
         self.max_iterations = max_iterations
         self.min_distance = min_distance
-        self.size = (size, size)
 
-    def run(self, image):
-        self.image = image
-        self.image.thumbnail(self.size)
-        self.pixels = numpy.array(image.getdata(), dtype=numpy.uint8)
+    def run(self, pixels):
 
+        self.pixels = pixels
         self.clusters = [None for i in range(self.k)]
         self.oldClusters = None
 
@@ -128,41 +117,6 @@ class Kmeans(object):
 
         return True
 
-    # ############################################
-    # The remaining methods are used for debugging
-    def showImage(self):
-        self.image.show()
-
-    def showCentroidColours(self):
-
-        for cluster in self.clusters:
-            image = Image.new("RGB", (200, 200), cluster.centroid)
-            image.show()
-
-    def showClustering(self):
-
-        localPixels = [None] * len(self.image.getdata())
-
-        for idx, pixel in enumerate(self.pixels):
-            shortest = float('Inf')
-            for cluster in self.clusters:
-                distance = self.calcDistance(
-                    cluster.centroid,
-                    pixel
-                )
-                if distance < shortest:
-                    shortest = distance
-                    nearest = cluster
-
-            localPixels[idx] = nearest.centroid
-
-        w, h = self.image.size
-        localPixels = numpy.asarray(localPixels) \
-            .astype('uint8') \
-            .reshape((h, w, 3))
-
-        colourMap = Image.fromarray(localPixels)
-        colourMap.show()
 
 if __name__ == "__main__":
     import os

@@ -2,6 +2,7 @@
 import colorsys
 from PIL import Image
 import k_mean_class
+import numpy
 
 """
  -------------generate_color---------------
@@ -19,8 +20,10 @@ def find_main_color(file,  max_iterations=20, min_distance=0.5, k=10):
     k_image = k_mean_class.Kmeans(max_iterations=max_iterations, min_distance=min_distance, k=k)
     im = Image.open(file)
     image = im.convert('RGB')
+    image.thumbnail((200,200))
+    pixels = numpy.array(image.getdata(), dtype=numpy.uint8)
     try:
-        color = k_image.run(image)
+        color = k_image.run(pixels)
     except:
         print(file + '∑÷Œˆ ß∞‹')
         return None
