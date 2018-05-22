@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class KMean {
+public class KMean implements Classify {
 	private int k = 5;
 	private int max_iterations = 20;
 	private int min_distance = 5;
 	private int size = 200;
 	private List<Color> colors = new ArrayList<>();
 	private List<Cluster> clusters = new ArrayList<>();
-
 	private List<Color> oldClusterCenters = new ArrayList<>();
 
 	public int getK() {
@@ -68,7 +67,7 @@ public class KMean {
 		double shortest = Float.MAX_VALUE;
 		Cluster nearest = null;
 		for (Cluster cluster : this.clusters) {
-			double distance = this.getDistance(cluster.getCenter(), pixel);
+			double distance = new Distance(cluster.getCenter(), pixel).getDistance();
 			if (distance < shortest) {
 				shortest = distance;
 				nearest = cluster;
@@ -80,7 +79,8 @@ public class KMean {
 	public List<Color> getMainColor() {
 		int i = 0;
 		while (!shouldExit(i)) {
-			this.oldClusterCenters = this.clusters.stream().map(cluster -> cluster.getCenter()).collect(Collectors.toList());
+			this.oldClusterCenters = this.clusters.stream().map(cluster -> cluster.getCenter())
+					.collect(Collectors.toList());
 			for (Color color : this.colors) {
 				assignClusters(color);
 			}
@@ -97,8 +97,8 @@ public class KMean {
 			return false;
 		}
 		for (int i = 0; i < this.k; i++) {
-			if (this.getDistance(this.getClusters().get(i).getCenter(),
-					this.getOldClusterCenters().get(i)) < this.min_distance) {
+			if (new Distance(this.getClusters().get(i).getCenter(),
+					this.getOldClusterCenters().get(i)).getDistance() < this.min_distance) {
 				return true;
 			}
 		}
@@ -108,11 +108,7 @@ public class KMean {
 		return true;
 	}
 
-	private double getDistance(Color one, Color two) {
-		double distanceSum = Math.pow((one.getR() - two.getR()), 2) + Math.pow((one.getG() - two.getG()), 2)
-				+ Math.pow((one.getB() - two.getB()), 2);
-		return Math.sqrt(distanceSum);
-	}
+	
 
 	public List<Color> getColors() {
 		return colors;
@@ -124,10 +120,6 @@ public class KMean {
 
 	public List<Cluster> getClusters() {
 		return clusters;
-	}
-
-	public void setClusters(List<Cluster> clusters) {
-		this.clusters = clusters;
 	}
 
 	public List<Color> getOldClusterCenters() {
